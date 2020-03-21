@@ -228,9 +228,35 @@ $$
 
 <font color=#212121>通过前面的讲解我们可以知道，MPC在求解线性问题时，当时间窗口($N_p$)足够大，可以得到与LQR基本相同的线性最优控制。但是显然LQR的求解更加方便。那么MPC的意义是啥？</font>
 
+考虑倒立摆系统：
 
+![](./pendulum.png)
 
+单摆系统动力学：
+$$
+\begin{aligned}
+u+mg\sin{x}&=ml^2\ddot{x}\\
+suppose:\ m=1,l&=1\\
+\Longrightarrow & \quad \quad \\
+u+g\sin{x}&=\ddot{x}
+\end{aligned}
+$$
+写成状态方程的形式：
+$$
+\left\{
+\begin{aligned}
+\dot{x}_1&=x_2\\
+\dot{x}_2&=g\sin{x_1}+u
+\end{aligned}
+\right.
+$$
+![](./pendulum_phase.png)
 
+非线性MPC控制的效果如下图红线所示
+
+![](./nonlinear_mpc.png)
+
+背景浅蓝色表示了某种意义上的最优解。可以看到在合适的MPC参数下，MPC控制器产生的控制效果能够逼近最优解！！！！
 
 ----------------------
 
@@ -344,6 +370,7 @@ $$
 
 + 采样问题
 + 数据使用有效性
++ 控制律基函数的设计（<font color=#ffa7c9>也许神经网络NN是一个很好的选择</font>）
 + 。。。
 
 
@@ -374,8 +401,28 @@ $$
   + 实现机器人对人们给的指令($\underbrace{\dot{x}^d,\dot{y}^d,\dot{z}^d}_{参考质心速度},\underbrace{\dot{\theta}^d,\dot{\psi}^d,\dot{\phi}^d}_{参考身体角速度}$)的跟踪
   + 除了对质心的控制外，我们经常需要机器人保持在一个合理的步态下，以免出现一些奇怪的运动。因此，上述目标都是在**<font color=#ffa7c9>满足步态的条件下</font>**进行实现的。
 
+> -----------------------------------
+>
+> 当前的技术方案：基于模仿学习的控制算法
+>
+> ![](./dynamics_control.png)
+>
+> 目前假设机器人的状态是全部准确可知的
+>
+> 通过控制机器人的步态参数可以实现对机器人的速度控制
+>
+> 然后将机器人步态生成器生成的各个关节的参考位置作为模仿的对象。模仿的代价函数设计接下来介绍，详情可以相关代码。
+>
+> 
+>
+> 
+
+
+
 ------------------------------------
 
 -------------------------
 
 码字不易，请给个赞  <font color=#ffa7c9>(✿◡‿◡)</font>
+
+git clone https://github.com/WoodenJin/OptimalControl-RL_abstract.git
