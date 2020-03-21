@@ -390,8 +390,10 @@ $$
 
   网络其实就是一种复杂的复合函数，但是能力非常的强大（这里不做NN的能力以及应用的介绍了，详情可以看Goodfellow 的《<font color=#88b8ff>Deep Learning</font>》）。
   $$
-  \mathbf{F(X)=\underbrace{f_N(...\underbrace{f_2(W_2\underbrace{f_1(W_1X+b_1)}_{第一层}+b_2)}_{第二层}...)}_{第N层}}
+  \mathbf{U=F(X)=\underbrace{f_N(...\underbrace{f_2({\color{#f00}W_2}\underbrace{f_1({\color{#f00}W_1}X+{\color{#0f0}b_1})}_{第一层}+{\color{#0f0}b_2})}_{第二层}...)}_{第N层}}
   $$
+  通过固定各种复合函数的基本形式，优化参数${\color{#f00}\mathbf{W_i}},{\color{#f00}\mathbf{b_i}}$,从而实现$\mathbf{X}$到${\mathbf{U}}$的最优映射。对于最优的定义可以按照不同的问题进行设计。
+
   ![](./actuation.jpeg)
 
 + 。。。
