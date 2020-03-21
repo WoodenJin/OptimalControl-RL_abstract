@@ -392,13 +392,15 @@ $$
   $$
   \mathbf{U=F(X)=\underbrace{f_N(...\underbrace{f_2({\color{#f00}W_2}\underbrace{f_1({\color{#f00}W_1}X+{\color{#0f0}b_1})}_{第一层}+{\color{#0f0}b_2})}_{第二层}...)}_{第N层}}
   $$
-  通过固定各种复合函数的基本形式，优化参数${\color{#f00}\mathbf{W_i}},{\color{#f00}\mathbf{b_i}}$,从而实现$\mathbf{X}$到${\mathbf{U}}$的最优映射。对于最优的定义可以按照不同的问题进行设计。
+  通过固定各种复合函数的基本形式，优化参数${\color{#f00}\mathbf{W_i}},{\color{#0f0}\mathbf{b_i}}$,从而实现$\mathbf{X}$到${\mathbf{U}}$的最优映射。对于最优的定义可以按照不同的问题进行设计。
 
   ![](./actuation.jpeg)
 
 + 。。。
 
 
+
+为了实现离线的最优控制，我们只要通过一些算法来调节参数${\color{#f00}\mathbf{W_i}},{\color{#0f0}\mathbf{b_i}}$找到最优函数$\mathbf{F}^*$实现代价函数的最优化即可。
 
 ----------------------------
 
@@ -412,7 +414,7 @@ $$
 
 + 12个关节($u\in R^{12}$)
 
-+ 状态$s$（以下只是举例，并不一定都需要）：
++ 状态$\mathbf{X}$ （以下只是举例，并不一定都需要,也不一定全）：
 
   身体状态：$\underbrace{x,y,z}_{质心位置}，\underbrace{\dot{x},\dot{y},\dot{z}}_{质心速度}，\underbrace{\theta,\psi,\phi}_{身体姿态}，\underbrace{\dot{\theta},\dot{\psi},\dot{\phi}}_{身体角速度}$
 
@@ -466,3 +468,10 @@ $$
 码字不易，请给个赞  <font color=#ffa7c9>(✿◡‿◡)</font>
 
 git clone https://github.com/WoodenJin/OptimalControl-RL_abstract.git
+
+
+
+
+
+
+
