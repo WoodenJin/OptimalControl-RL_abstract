@@ -70,6 +70,8 @@ $$
 
 ### <font color=#88b8ff>最优控制与线性二次调节器（LQR）</font>
 
+LQR是一种针对线性系统的最优控制算法
+
 $u={k_1}x_1+k_2x_2$
 
 <font color=#212121>前面实验的结果是我们随机给的，当然学过操纵控制理论的同学肯定知道如何设计控制参数$k_1,k_2$，但是这里存在一个问题就是如何假设驱动器能够提供足够大的驱动力，控制器能够按照我们设计的控制律输出。同时控制的质量也没有过要求</font>  
@@ -106,6 +108,16 @@ $$
 -------------------------------
 
 ### <font color=#88b8ff>模型预测控制（MPC）</font>
+
+![](./anim.gif)
+
+对于动力学系统$\mathbf{\dot{X}=f(X,U)}$, 同过优化$\underbrace{\mathbf{U_{t_0},U_{t_0+\Delta t},...,U_{t_0+(N-1)\Delta t}}}_{一共N个，一般称为时间窗口N}$，实现代价函数的最小化。
+
+代价函数的形式任意，但一般为：$\sum^{N-1}_0{\mathbf{X^T_{t_0+i\Delta t}QX_{t_0+i\Delta t}+U^T_{t_0+i\Delta t}RU_{t_0+i\Delta t}}}$
+
+一般每次取$\mathbf{U_{t_0}}$作为控制量，并在每个控制周期都重新执行优化的过程
+
+-----------------------------------------
 
 #### **<font color=#a0a0ff>线性情况</font>**
 
@@ -222,7 +234,7 @@ Np&=1000,&u(x,v)=-10.38x-11.22v \\
 $$
 当采取的时间段比较少的时候，MPC采样的时候并无法包含整个路径，因此代价函数的反馈中，会将速度尽可能降低，同时保证整个系统的驱动器的作用量较小，因此会产生这种结果。但是随着采样探索的路径尽可能完整，优化过程中就会发现对位置的反馈变得越来越重要，因此位置反馈的权重会上来。同样，随着采样时间的增加，发现加大驱动力的效果可以更快地实现位置和速度的代价降低，因此会通过增加驱动器的代价来实现整体代价的降低
 
-
+----------------------------------------------
 
 #### **<font color=#a0a0ff>非线性情况</font>**
 
@@ -369,8 +381,19 @@ $$
 上面的推导过程与案例都是简单的单自由度系统，但是当系统自由度增加，上述操作过程会存在一些隐患
 
 + 采样问题
+
 + 数据使用有效性
+
 + 控制律基函数的设计（<font color=#ffa7c9>也许神经网络NN是一个很好的选择</font>）
+
+  ![](./neuron.png)
+
+  网络其实就是一种复杂的复合函数，但是能力非常的强大（这里不做NN的能力以及应用的介绍了，详情可以看Goodfellow 的《<font color=#88b8ff>Deep Learning</font>》）。
+  $$
+  \mathbf{F(X)=\underbrace{f_N(...\underbrace{f_2(W_2\underbrace{f_1(W_1X+b_1)}_{第一层}+b_2)}_{第二层}...)}_{第N层}}
+  $$
+  ![](./actuation.jpeg)
+
 + 。。。
 
 
@@ -393,7 +416,7 @@ $$
 
   关节状态：$\underbrace{\theta_1,\theta_2,...,\theta_{12}}_{关节角度}，\underbrace{\dot{\theta}_1,\dot{\theta}_2,...,\dot{\theta}_{12}}_{关节速度}$
 
-  其他状态：$\underbrace{p_1,p_2,p_3,p_4}_{机器人脚是否接触地面}$...
+  其他状态：$\underbrace{p_1,p_2,p_3,p_4}_{机器人脚是否接触地面},\underbrace{phase(time)}_{周期性任务的计时器},$...
 
   环境状态：image or something else	
 
@@ -403,7 +426,7 @@ $$
 
 > -----------------------------------
 >
-> 当前的技术方案：基于模仿学习的控制算法
+> 当前的技术方案：基于模仿学习的控制算法（ref:"<font color=#88b8ff>DeepMimic: Example-Guided Deep Reinforcement of Physics-Based Character Skills</font>"）
 >
 > ![](./dynamics_control.png)
 >
@@ -411,9 +434,24 @@ $$
 >
 > 通过控制机器人的步态参数可以实现对机器人的速度控制
 >
-> 然后将机器人步态生成器生成的各个关节的参考位置作为模仿的对象。模仿的代价函数设计接下来介绍，详情可以相关代码。
+> 然后将机器人步态生成器生成的各个关节的参考位置作为模仿的对象。模仿的代价函数设计接下来介绍，详情可以查看内部相关代码。
 >
+> DeepMimic 代价函数的基本结构是：
+> $$
+> \begin{aligned}
+> r^I_t&=w^pr^p_t+w^vr^v_t+w^er^e_t+w^cr^c_p \\
+> w^p &= 0.65,  w^v=0.1,  w^e=0.15,  w^c=0.1 \\
 > 
+> r^p_t &= exp\left[ -2\left( \sum_{j}{ \lVert \underbrace{ \hat{q}^j_t \ominus q^j_t}_{第j个关节设计的t时刻的角度与实际角度的差异} \rVert^2 } \right) \right] \\
+> 
+> r^v_t&=exp \left[ -0.1 \left( \sum_j{\lVert \underbrace{\hat{\dot{q}}^j_t-\dot{q}^j_t}_{第j个关节设计的角度与实际角速度的差异} \rVert^2} \right) \right] \\
+> 
+> r^e_t&=exp \left[ -40 \left( \sum_j{\lVert \underbrace{ \hat{q}^e_t-q^e_t}_{end \ effector参考位置与实际位置的差异} \rVert^2} \right) \right] \\
+> 
+> r^c_t&=exp \left[ -10 \left( \lVert \underbrace{\hat{q}^c_t-q^c_t}_{质心速度的差异} \rVert \right) \right] \ 
+> \end{aligned}
+> $$
+> $\color{#f00}\hat{}$  符号表示参考值，目前我们利用人为设计的轨迹生成器进行参考值的生成
 >
 > 
 
