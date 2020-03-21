@@ -448,12 +448,12 @@ $$
 > 
 > r^e_t&=exp \left[ -40 \left( \sum_j{\lVert \underbrace{ \hat{q}^e_t-q^e_t}_{end \ effector参考位置与实际位置的差异} \rVert^2} \right) \right] \\
 > 
-> r^c_t&=exp \left[ -10 \left( \lVert \underbrace{\hat{q}^c_t-q^c_t}_{质心速度的差异} \rVert \right) \right] \ 
+> r^c_t&=exp \left[ -10 \left( \lVert \underbrace{\hat{q}^c_t-q^c_t}_{质心速度的差异} \rVert^2 \right) \right] \ 
 > \end{aligned}
 > $$
 > $\color{#f00}\hat{}$  符号表示参考值，目前我们利用人为设计的轨迹生成器进行参考值的生成
 >
-> 
+> ![](./reward_shape.png)
 
 
 
